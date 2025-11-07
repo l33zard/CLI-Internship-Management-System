@@ -3,11 +3,12 @@
 <div align="center">
 <p>SC2002 Object-Oriented Design & Programming | AY2024/25 Semester 2</p>
 
-[![Javadoc Badge](https://img.shields.io/badge/Javadoc-F8981D?style=for-the-badge&logo=readthedocs&logoColor=FFFFFF&labelColor=222222)](#)
+[![Javadoc Badge](https://img.shields.io/badge/Javadoc-F8981D?style=for-the-badge&logo=readthedocs&logoColor=FFFFFF&logoSize=auto&labelColor=222222)](https://l33zard.github.io/SC2002/)
 &nbsp;
-[![Class Diagrams Badge](https://img.shields.io/badge/Class%20Diagrams-C2F0C0?style=for-the-badge&logo=diagramsdotnet&logoColor=FFFFFF&labelColor=222222)](#)
+[![Class Diagrams Badge](https://img.shields.io/badge/Class%20Diagrams-C2F0C0?style=for-the-badge&logo=diagramsdotnet&logoColor=FFFFFF&logoSize=auto&labelColor=222222)](https://github.com/l33zard/SC2002/blob/main/docs/classDiagram/main.png)
 &nbsp;
-[![Sequence Diagrams Badge](https://img.shields.io/badge/Sequence%20Diagrams-FFF6B6?style=for-the-badge&logo=miro&logoColor=222222&labelColor=222222)](#)
+[![Sequence Diagrams Badge](https://img.shields.io/badge/Sequence%20Diagrams-FFF6B6?style=for-the-badge&logo=miro&logoSize=auto&labelColor=222222)](https://github.com/l33zard/SC2002/blob/main/docs/sequenceDiagram/mainFunctionalities/Application%20Process.jpg)
+
 
 👆 Click the buttons above to view documentation and diagrams 👆
 
@@ -126,6 +127,7 @@ For PowerShell:
 ```powershell
 Get-ChildItem -Recurse -Filter *.java -Path .\src | ForEach-Object { javac -d .\bin $_.FullName }; ja
 ```
+
 
 
 
