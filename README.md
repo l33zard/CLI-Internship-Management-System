@@ -51,8 +51,8 @@ It was developed as part of the **SC2002 Object-Oriented Design & Programming** 
 | **Name**        | **GitHub Profile** | **Email Address** |
 |-----------------|--------------------|-------------------|
 | Lee Xun         | [![GitHub Badge](https://img.shields.io/badge/l33zard-%23181717?logo=github)](https://github.com/l33zard) | xlee065@e.ntu.edu.sg |
-| Matthias Kwan   | [![GitHub Badge](https://img.shields.io/badge/holuuu17-%23181717?logo=github)](https://github.com/l33zard) | matt0076@e.ntu.edu.sg |
-| Fong Yee Xin    | [![GitHub Badge](https://img.shields.io/badge/nixE911-%23181717?logo=github)](https://github.com/l33zard) | yfong009@e.ntu.edu.sg |
+| Matthias Kwan   | [![GitHub Badge](https://img.shields.io/badge/holuuu17-%23181717?logo=github)](https://github.com/holuuu17) | matt0076@e.ntu.edu.sg |
+| Fong Yee Xin    | [![GitHub Badge](https://img.shields.io/badge/nixE911-%23181717?logo=github)](https://github.com/nixE911) | yfong009@e.ntu.edu.sg |
 | Daniel Law      | [GitHub Link] | [Email] |
 
 ---
@@ -127,4 +127,5 @@ For PowerShell:
 ```powershell
 Get-ChildItem -Recurse -Filter *.java -Path .\src | ForEach-Object { javac -d .\bin $_.FullName }; ja
 ```
+
 
