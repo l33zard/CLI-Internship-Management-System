@@ -29,7 +29,7 @@ It was developed as part of the **SC2002 Object-Oriented Design & Programming** 
 ---
 
 ## Project Structure
-
+```
 📦 Internship-Management-System
 ├── src/
 │ ├── app/ # Main entry point (Main.java)
@@ -42,8 +42,7 @@ It was developed as part of the **SC2002 Object-Oriented Design & Programming** 
 │
 ├── .gitignore
 ├── README.md
-
-
+```
 ---
 
 ## Team Members
@@ -127,5 +126,6 @@ For PowerShell:
 ```powershell
 Get-ChildItem -Recurse -Filter *.java -Path .\src | ForEach-Object { javac -d .\bin $_.FullName }; ja
 ```
+
 
 
