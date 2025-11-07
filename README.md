@@ -1,7 +1,7 @@
 ﻿<h1 align="center">Internship Management System</h1>
 
 <div align="center">
-<p>SC2002 Object-Oriented Design & Programming | AY2024/25 Semester 2</p>
+<p>SC2002 Object-Oriented Design & Programming | AY2025/26 Semester 1</p>
 
 [![Javadoc Badge](https://img.shields.io/badge/Javadoc-F8981D?style=for-the-badge&logo=readthedocs&logoColor=FFFFFF&logoSize=auto&labelColor=222222)](https://l33zard.github.io/SC2002/)
 &nbsp;
