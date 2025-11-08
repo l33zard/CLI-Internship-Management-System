@@ -1,4 +1,4 @@
 InternshipID,Title,Description,Level,PreferredMajor,OpenDate,CloseDate,Status,CompanyName,MaxSlots,ConfirmedSlots,Visible
 INT0001,BASIC Software Eng,BASIC L1 Taskings,BASIC,CSC,2025-11-08,2025-11-30,APPROVED,NVDA,2,0,true
-INT0002,BASIC Software Eng (Leave as Pending),BASIC L1 taskings,BASIC,CSC,2025-11-08,2025-11-30,PENDING,NVDA,2,0,false
 INT0004,L3 Software Intern,L3 Taskings,ADVANCED,CSC,2025-11-08,2025-11-30,APPROVED,NVDA,1,0,true
+INT0005,BASIC Software Eng (Leave as Pending),BASIC L1 taskings,BASIC,CSC,2025-11-08,2025-11-30,PENDING,NVDA,2,0,false

@@ -289,13 +289,9 @@ private void handleEditInternship(String repEmail, Internship internship) {
     
     int maxSlots = getOptionalSlotInput("Max slots [" + currentSlots + "]: ", currentSlots);
 
-    try {
-        ctl.editInternship(repEmail, internship.getInternshipId(), title, description, level, 
-                          preferredMajor, openDate, closeDate, maxSlots);
-        System.out.println("Internship updated successfully!");
-    } catch (Exception ex) {
-        System.out.println("Error updating internship: " + ex.getMessage());
-    }
+    ctl.editInternship(repEmail, internship.getInternshipId(), title, description, level, preferredMajor, openDate, closeDate, maxSlots);
+    System.out.println("Internship updated successfully.");
+
 }
 
 /* ---------- Delete Internship ---------- */
