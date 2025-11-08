@@ -1,7 +1,7 @@
 package boundary;
 
-import controller.CompanyRepController;
 import controller.AuthController;
+import controller.CompanyRepController;
 import entity.Internship;
 import entity.InternshipApplication;
 import entity.InternshipLevel;
@@ -24,8 +24,6 @@ public class CompanyRepBoundary extends BaseBoundary {
             displaySectionHeader("Company Representative Dashboard");
             System.out.println("1. View My Internships");
             System.out.println("2. Create New Internship");
-            System.out.println("3. Edit Internship");
-            System.out.println("4. Delete Internship");
             System.out.println("9. Change my password");
             System.out.println("0. Logout");
             System.out.print("Choice: ");
@@ -34,8 +32,6 @@ public class CompanyRepBoundary extends BaseBoundary {
                 switch (choice) {
                     case "1" -> handleInternships(repEmail);
                     case "2" -> handleCreateInternship(repEmail);
-                    case "3" -> handleEditInternship(repEmail);
-                    case "4" -> handleDeleteInternship(repEmail);
                     case "9" -> {
                         boolean changed = changePassword(repEmail);
                         if (changed) return;
@@ -83,39 +79,51 @@ public class CompanyRepBoundary extends BaseBoundary {
     }
 
     private void handleInternshipActions(String repEmail, Internship internship) {
-        while (true) {
-            displayInternshipDetails(internship);
-            displaySubSectionHeader("Action Menu");
-            System.out.println("1. Set Visibility");
-            System.out.println("2. View Applications");
-            System.out.println("0. Back to List");
-            System.out.print("Choice: ");
-            String act = sc.nextLine().trim();
-            try {
-                switch (act) {
-                    case "1" -> {
-                        if (internship.getStatus() != InternshipStatus.APPROVED) {
-                            System.out.println("Only approved internships can have visibility changed.");
-                            continue;
-                        }
-                        boolean vis = confirmAction("Make visible to students?");
-                        ctl.setVisibility(repEmail, internship.getInternshipId(), vis);
-                        System.out.println(vis ? "Set to visible." : "Set to hidden.");
-                        // Refresh the internship object
-                        internship = ctl.getInternship(repEmail, internship.getInternshipId());
+    while (true) {
+        displayInternshipDetails(internship);
+        System.out.println("\n--- Action Menu ---");
+        System.out.println("1. Set Visibility");
+        System.out.println("2. View Applications");
+        System.out.println("3. Edit Internship");
+        System.out.println("4. Delete Internship");
+        System.out.println("0. Back to List");
+        System.out.print("Choice: ");
+        String act = sc.nextLine().trim();
+        try {
+            switch (act) {
+                case "1" -> {
+                    if (internship.getStatus() != InternshipStatus.APPROVED) {
+                        System.out.println("Only approved internships can have visibility changed.");
+                        continue;
                     }
-                    case "2" -> {
-                        handleApplications(repEmail, internship);
-                        return;
-                    }
-                    case "0" -> { return; }
-                    default -> System.out.println("Invalid choice. Please try again.");
+                    boolean vis = promptBoolean("Make visible to students? (1 = Yes, 0 = No): ");
+                    ctl.setVisibility(repEmail, internship.getInternshipId(), vis);
+                    System.out.println(vis ? "Set to visible." : "Set to hidden.");
+                    // Refresh the internship object
+                    internship = ctl.getInternship(repEmail, internship.getInternshipId());
                 }
-            } catch (Exception ex) {
-                System.out.println("Error: " + ex.getMessage());
+                case "2" -> {
+                    handleApplications(repEmail, internship);
+                    return; // back to list after viewing apps
+                }
+                case "3" -> {
+                    handleEditInternship(repEmail, internship);
+                    // Refresh after edit
+                    internship = ctl.getInternship(repEmail, internship.getInternshipId());
+                }
+                case "4" -> {
+                    handleDeleteInternship(repEmail, internship);
+                    return; // back to list after deletion
+                }
+                case "0" -> { return; }
+                default -> System.out.println("Invalid choice. Please try again.");
             }
+        } catch (Exception ex) {
+            System.out.println("Error: " + ex.getMessage());
         }
     }
+}
+
 
     /* ---------- View Applications for One Internship ---------- */
     private void handleApplications(String repEmail, Internship internship) {
@@ -253,97 +261,60 @@ public class CompanyRepBoundary extends BaseBoundary {
     }
 
     /* ---------- Edit Internship ---------- */
-    private void handleEditInternship(String repEmail) {
-        List<Internship> editableInternships = ctl.listInternships(repEmail).stream()
-                .filter(Internship::isEditable)
-                .toList();
-                
-        if (editableInternships.isEmpty()) {
-            System.out.println("No editable internships found. Only PENDING internships can be edited.");
-            return;
-        }
-
-        displaySectionHeader("Edit Internship");
-        for (int i = 0; i < editableInternships.size(); i++) {
-            Internship it = editableInternships.get(i);
-            System.out.printf("%d) %s [%s] | Created: %s\n",
-                    i + 1, it.getTitle(), it.getLevel(), it.getOpenDate());
-        }
-
-        System.out.print("Select internship to edit (0 to back): ");
-        int sel = safeInt(sc.nextLine(), 0);
-        if (sel <= 0 || sel > editableInternships.size()) return;
-
-        Internship chosen = editableInternships.get(sel - 1);
-        editInternshipDetails(repEmail, chosen);
+private void handleEditInternship(String repEmail, Internship internship) {
+    if (!internship.isEditable()) {
+        System.out.println("Cannot edit internship that has been approved or rejected.");
+        return;
     }
+    
+    System.out.println("\n=== Editing: " + internship.getTitle() + " ===");
+    System.out.println("Leave field blank to keep current value.");
+    
+    String currentTitle = internship.getTitle();
+    String currentDesc = internship.getDescription();
+    InternshipLevel currentLevel = internship.getLevel();
+    String currentMajor = internship.getPreferredMajor();
+    LocalDate currentOpen = internship.getOpenDate();
+    LocalDate currentClose = internship.getCloseDate();
+    int currentSlots = internship.getMaxSlots();
 
-    private void editInternshipDetails(String repEmail, Internship internship) {
-        displaySectionHeader("Editing: " + internship.getTitle());
-        System.out.println("Leave field blank to keep current value.");
-        
-        String currentTitle = internship.getTitle();
-        String currentDesc = internship.getDescription();
-        InternshipLevel currentLevel = internship.getLevel();
-        String currentMajor = internship.getPreferredMajor();
-        LocalDate currentOpen = internship.getOpenDate();
-        LocalDate currentClose = internship.getCloseDate();
-        int currentSlots = internship.getMaxSlots();
+    String title = getOptionalInput("Title [" + currentTitle + "]: ", currentTitle);
+    String description = getOptionalInput("Description [" + currentDesc + "]: ", currentDesc);
+    
+    InternshipLevel level = getOptionalInternshipLevel(currentLevel);
+    String preferredMajor = getOptionalInput("Preferred Major [" + currentMajor + "]: ", currentMajor);
+    
+    LocalDate openDate = getOptionalDateInput("Open date [" + currentOpen + "]: ", currentOpen, false);
+    LocalDate closeDate = getOptionalDateInput("Close date [" + currentClose + "]: ", currentClose, true);
+    
+    int maxSlots = getOptionalSlotInput("Max slots [" + currentSlots + "]: ", currentSlots);
 
-        String title = getOptionalInput("Title [" + currentTitle + "]: ", currentTitle);
-        String description = getOptionalInput("Description [" + currentDesc + "]: ", currentDesc);
-        
-        InternshipLevel level = getOptionalInternshipLevel(currentLevel);
-        String preferredMajor = getOptionalInput("Preferred Major [" + currentMajor + "]: ", currentMajor);
-        
-        LocalDate openDate = getOptionalDateInput("Open date [" + currentOpen + "]: ", currentOpen, false);
-        LocalDate closeDate = getOptionalDateInput("Close date [" + currentClose + "]: ", currentClose, true);
-        
-        int maxSlots = getOptionalSlotInput("Max slots [" + currentSlots + "]: ", currentSlots);
+    try {
+        ctl.editInternship(repEmail, internship.getInternshipId(), title, description, level, 
+                          preferredMajor, openDate, closeDate, maxSlots);
+        System.out.println("Internship updated successfully!");
+    } catch (Exception ex) {
+        System.out.println("Error updating internship: " + ex.getMessage());
+    }
+}
 
+/* ---------- Delete Internship ---------- */
+private void handleDeleteInternship(String repEmail, Internship internship) {
+    if (!internship.canBeDeleted()) {
+        System.out.println("Cannot delete internship that has been approved.");
+        return;
+    }
+    
+    boolean confirm = promptBoolean("Are you sure you want to delete '" + internship.getTitle() + "'? (1 = Yes, 0 = No): ");
+    if (confirm) {
         try {
-            ctl.editInternship(repEmail, internship.getInternshipId(), title, description, level, 
-                              preferredMajor, openDate, closeDate, maxSlots);
-            System.out.println("Internship updated successfully!");
+            ctl.deleteInternship(repEmail, internship.getInternshipId());
+            System.out.println("Internship deleted successfully!");
         } catch (Exception ex) {
-            System.out.println("Error updating internship: " + ex.getMessage());
+            System.out.println("Error deleting internship: " + ex.getMessage());
         }
     }
-
-    /* ---------- Delete Internship ---------- */
-    private void handleDeleteInternship(String repEmail) {
-        List<Internship> deletableInternships = ctl.listInternships(repEmail).stream()
-                .filter(Internship::canBeDeleted)
-                .toList();
-                
-        if (deletableInternships.isEmpty()) {
-            System.out.println("No deletable internships found. Only PENDING or REJECTED internships can be deleted.");
-            return;
-        }
-
-        displaySectionHeader("Delete Internship");
-        for (int i = 0; i < deletableInternships.size(); i++) {
-            Internship it = deletableInternships.get(i);
-            System.out.printf("%d) %s [%s] | Status: %s\n",
-                    i + 1, it.getTitle(), it.getLevel(), it.getStatus());
-        }
-
-        System.out.print("Select internship to delete (0 to back): ");
-        int sel = safeInt(sc.nextLine(), 0);
-        if (sel <= 0 || sel > deletableInternships.size()) return;
-
-        Internship chosen = deletableInternships.get(sel - 1);
-        
-        boolean confirm = confirmAction("Are you sure you want to delete '" + chosen.getTitle() + "'?");
-        if (confirm) {
-            try {
-                ctl.deleteInternship(repEmail, chosen.getInternshipId());
-                System.out.println("Internship deleted successfully!");
-            } catch (Exception ex) {
-                System.out.println("Error deleting internship: " + ex.getMessage());
-            }
-        }
-    }
+}
 
     /* ---------- Input Helpers ---------- */
     private InternshipLevel getInternshipLevel() {

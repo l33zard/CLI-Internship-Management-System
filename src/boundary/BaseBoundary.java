@@ -101,7 +101,6 @@ public abstract class BaseBoundary {
     }
 
     protected void displaySubSectionHeader(String title) {
-        System.out.println();
         System.out.println(title);
         System.out.println("-".repeat(title.length()));
     }
