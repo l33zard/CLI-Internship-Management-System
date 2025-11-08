@@ -3,14 +3,14 @@
 <div align="center">
 <p>SC2002 Object-Oriented Design & Programming | AY2025/26 Semester 1</p>
 
-[![Javadoc Badge](https://img.shields.io/badge/Javadoc-F8981D?style=for-the-badge&logo=readthedocs&logoColor=FFFFFF&logoSize=auto&labelColor=222222)](https://l33zard.github.io/SC2002/)
+[![Javadoc Badge](https://img.shields.io/badge/Javadoc-F8981D?style=for-the-badge&logo=readthedocs&logoColor=FFFFFF&logoSize=auto&labelColor=222222)](https://github.com/l33zard/SC2002-internship-management-system/tree/077d5840af15f734ec3c9f3d58a8e33222b6da24/docs/javaDoc)
 &nbsp;
-[![Class Diagrams Badge](https://img.shields.io/badge/Class%20Diagrams-C2F0C0?style=for-the-badge&logo=diagramsdotnet&logoColor=FFFFFF&logoSize=auto&labelColor=222222)](https://github.com/l33zard/SC2002/blob/main/docs/classDiagram/main.png)
+[![Class Diagrams Badge](https://img.shields.io/badge/Class%20Diagrams-C2F0C0?style=for-the-badge&logo=diagramsdotnet&logoColor=FFFFFF&logoSize=auto&labelColor=222222)](https://github.com/l33zard/SC2002-internship-management-system/tree/077d5840af15f734ec3c9f3d58a8e33222b6da24/docs/classDiagrams)
 &nbsp;
-[![Sequence Diagrams Badge](https://img.shields.io/badge/Sequence%20Diagrams-FFF6B6?style=for-the-badge&logo=miro&logoSize=auto&labelColor=222222)](https://github.com/l33zard/SC2002/blob/main/docs/sequenceDiagram/mainFunctionalities/Application%20Process.jpg)
+[![Sequence Diagrams Badge](https://img.shields.io/badge/Sequence%20Diagrams-FFF6B6?style=for-the-badge&logo=miro&logoSize=auto&labelColor=222222)](https://github.com/l33zard/SC2002-internship-management-system/tree/077d5840af15f734ec3c9f3d58a8e33222b6da24/docs/sequenceDiagrams)
 
 
-👆 Click the buttons above to view documentation and diagrams (Links don't work yet)👆
+👆 Click the buttons above to view documentation and diagrams 👆
 
 <p align="center">
 <a href="#introduction">Introduction</a> &nbsp;&bull;&nbsp;
