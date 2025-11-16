@@ -1,0 +1,5 @@
+CompanyRepID,Name,CompanyName,Department,Position,Email,Status,Password,RejectionReason
+dave@email.com,Dave,MSFT,TA,Manager,dave@email.com,APPROVED,password,
+harry@email.com,Harry,NCDA,IT,HR Intern,harry@email.com,APPROVED,password,
+tom@email.com,Tom,APPL,Sales,Director,tom@email.com,APPROVED,password,
+jerry@email.com,Jerry,SAMSUNG,TA,Manager,jerry@email.com,REJECTED,password,Samsung ass
