@@ -4,5 +4,5 @@
 /**
  * 
  */
-module assignment2 {
+module Internship.Management.System {
 }

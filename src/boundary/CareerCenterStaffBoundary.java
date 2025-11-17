@@ -9,14 +9,63 @@ import entity.InternshipStatus;
 import entity.WithdrawalRequest;
 import java.util.List;
 
+/**
+ * Console boundary for Career Center staff operations. Allows staff to
+ * review and approve internships, company representative registrations and
+ * withdrawal requests as well as generate simple reports.
+ * <p>
+ * This boundary provides the user interface for Career Center staff members to:
+ * <ul>
+ *   <li>Review and approve/reject pending internship postings</li>
+ *   <li>Approve or reject company representative registrations</li>
+ *   <li>Process student withdrawal requests for applications</li>
+ *   <li>Generate filtered reports on internships</li>
+ *   <li>Change their own password</li>
+ * </ul>
+ * 
+ * The interface follows a hierarchical menu structure with comprehensive
+ * error handling and user feedback.
+ * 
+ */
 public class CareerCenterStaffBoundary extends BaseBoundary {
+    /** Controller for career center staff business operations */
     private final CareerCenterStaffController ctl;
 
+    /**
+     * Creates a staff boundary bound to the supplied controller and auth.
+     *
+     * @param ctl  controller for career center staff operations
+     * @param auth authentication controller used for password changes
+     */
     public CareerCenterStaffBoundary(CareerCenterStaffController ctl, AuthController auth) {
         super(auth);
         this.ctl = ctl;
     }
 
+    /**
+     * Main menu loop for career center staff.
+     * <p>
+     * Displays the primary navigation menu and handles user input to direct
+     * to appropriate functionality. The menu includes:
+     * <ul>
+     *   <li>Pending internship management</li>
+     *   <li>Company representative approval</li>
+     *   <li>Withdrawal request processing</li>
+     *   <li>Report generation</li>
+     *   <li>Password change</li>
+     *   <li>Logout</li>
+     * </ul>
+     * 
+     * The method runs in a continuous loop until the user chooses to logout.
+     * All exceptions are caught and handled gracefully with user-friendly messages.
+     *
+     * @param staffId login key of the currently authenticated staff user
+     * 
+     * @see #handlePendingInternships(String)
+     * @see #handlePendingCompanyReps(String)
+     * @see #handlePendingWithdrawals(String)
+     * @see #handleReports(String)
+     */
     public void menu(String staffId) {
         while (true) {
             displaySectionHeader("Career Center Staff Dashboard");
@@ -52,6 +101,26 @@ public class CareerCenterStaffBoundary extends BaseBoundary {
     }
 
     /* ---------- 1) Pending Internships ---------- */
+    
+    /**
+     * Displays pending internship approvals and allows staff to approve or reject.
+     * <p>
+     * This method:
+     * <ol>
+     *   <li>Retrieves all internships with PENDING status</li>
+     *   <li>Displays them in a numbered list with key details</li>
+     *   <li>Allows staff to select an internship for detailed review</li>
+     *   <li>Provides options to approve (with visibility choice) or reject</li>
+     *   <li>Handles all operations with proper error handling</li>
+     * </ol>
+     *
+     * @param staffId id of the staff member reviewing
+     * 
+     * @see CareerCenterStaffController#listPendingInternships()
+     * @see CareerCenterStaffController#approveInternship(String, String, boolean)
+     * @see CareerCenterStaffController#rejectInternship(String, String)
+     * @see #displayInternshipDetails(Internship)
+     */
     private void handlePendingInternships(String staffId) {
         List<Internship> list = ctl.listPendingInternships();
         if (list.isEmpty()) {
@@ -112,6 +181,26 @@ public class CareerCenterStaffBoundary extends BaseBoundary {
     }
 
     /* ---------- 2) Pending Company Reps ---------- */
+    
+    /**
+     * Displays pending company representative registrations and allows staff to approve or reject.
+     * <p>
+     * This method:
+     * <ol>
+     *   <li>Retrieves all unapproved company representatives</li>
+     *   <li>Displays them in a numbered list with contact details</li>
+     *   <li>Allows staff to select a representative for detailed review</li>
+     *   <li>Provides options to approve or reject (with reason)</li>
+     *   <li>Handles all operations with proper error handling</li>
+     * </ol>
+     *
+     * @param staffId id of the staff member reviewing
+     * 
+     * @see CareerCenterStaffController#listUnapprovedReps()
+     * @see CareerCenterStaffController#approveCompanyRep(String, String)
+     * @see CareerCenterStaffController#rejectCompanyRep(String, String, String)
+     * @see #displayRepDetails(CompanyRep)
+     */
     private void handlePendingCompanyReps(String staffId) {
         List<CompanyRep> reps = ctl.listUnapprovedReps();
         if (reps.isEmpty()) {
@@ -170,6 +259,26 @@ public class CareerCenterStaffBoundary extends BaseBoundary {
     }
 
     /* ---------- 3) Pending Withdrawal Requests ---------- */
+    
+    /**
+     * Displays pending withdrawal requests and allows staff to approve or reject.
+     * <p>
+     * This method:
+     * <ol>
+     *   <li>Retrieves all pending withdrawal requests</li>
+     *   <li>Displays them in a numbered list with student and internship details</li>
+     *   <li>Allows staff to select a request for detailed review</li>
+     *   <li>Provides options to approve or reject (with optional notes)</li>
+     *   <li>Handles all operations with proper error handling</li>
+     * </ol>
+     *
+     * @param staffId id of the staff member reviewing
+     * 
+     * @see CareerCenterStaffController#listPendingWithdrawals()
+     * @see CareerCenterStaffController#approveWithdrawal(String, String, String)
+     * @see CareerCenterStaffController#rejectWithdrawal(String, String, String)
+     * @see #displayWithdrawalDetails(WithdrawalRequest)
+     */
     private void handlePendingWithdrawals(String staffId) {
         List<WithdrawalRequest> list = ctl.listPendingWithdrawals();
         if (list.isEmpty()) {
@@ -232,6 +341,27 @@ public class CareerCenterStaffBoundary extends BaseBoundary {
     }
 
     /* ---------- 4) Reports ---------- */
+    
+    /**
+     * Displays report generation menu allowing filtering by various criteria.
+     * <p>
+     * Provides a sub-menu for generating different types of internship reports:
+     * <ul>
+     *   <li>By status (PENDING, APPROVED, REJECTED, etc.)</li>
+     *   <li>By preferred major</li>
+     *   <li>By company name</li>
+     *   <li>By internship level</li>
+     *   <li>All internships</li>
+     * </ul>
+     *
+     * @param staffId id of the staff member generating reports
+     * 
+     * @see #generateInternshipsByStatus()
+     * @see #generateInternshipsByMajor()
+     * @see #generateInternshipsByCompany()
+     * @see #generateInternshipsByLevel()
+     * @see #generateAllInternships()
+     */
     private void handleReports(String staffId) {
         while (true) {
             displaySectionHeader("Generate Reports");
@@ -260,6 +390,15 @@ public class CareerCenterStaffBoundary extends BaseBoundary {
         }
     }
 
+    /**
+     * Generates and displays internship report filtered by status.
+     * <p>
+     * Prompts the user for a status filter and displays all internships
+     * matching that status. If no status is provided, shows all internships.
+     *
+     * @see CareerCenterStaffController#filterInternships(InternshipStatus, String, String, String)
+     * @see #displayInternshipReport(List, String)
+     */
     private void generateInternshipsByStatus() {
         displaySectionHeader("Internships by Status");
         System.out.print("Enter status (PENDING/APPROVED/REJECTED/FILLED/CLOSED) or leave blank for all: ");
@@ -278,6 +417,15 @@ public class CareerCenterStaffBoundary extends BaseBoundary {
         displayInternshipReport(internships, "Status: " + (status != null ? status : "ALL"));
     }
 
+    /**
+     * Generates and displays internship report filtered by preferred major.
+     * <p>
+     * Prompts the user for a major filter and displays all internships
+     * matching that major. If no major is provided, shows all internships.
+     *
+     * @see CareerCenterStaffController#filterInternships(InternshipStatus, String, String, String)
+     * @see #displayInternshipReport(List, String)
+     */
     private void generateInternshipsByMajor() {
         displaySectionHeader("Internships by Major");
         System.out.print("Enter major (CSC/EEE/MAE/etc) or leave blank for all: ");
@@ -288,6 +436,15 @@ public class CareerCenterStaffBoundary extends BaseBoundary {
         displayInternshipReport(internships, "Major: " + (major != null ? major : "ALL"));
     }
 
+    /**
+     * Generates and displays internship report filtered by company name.
+     * <p>
+     * Prompts the user for a company name filter and displays all internships
+     * from that company. If no company is provided, shows all internships.
+     *
+     * @see CareerCenterStaffController#filterInternships(InternshipStatus, String, String, String)
+     * @see #displayInternshipReport(List, String)
+     */
     private void generateInternshipsByCompany() {
         displaySectionHeader("Internships by Company");
         System.out.print("Enter company name or leave blank for all: ");
@@ -298,6 +455,15 @@ public class CareerCenterStaffBoundary extends BaseBoundary {
         displayInternshipReport(internships, "Company: " + (company != null ? company : "ALL"));
     }
 
+    /**
+     * Generates and displays internship report filtered by internship level.
+     * <p>
+     * Prompts the user for a level filter and displays all internships
+     * matching that level. If no level is provided, shows all internships.
+     *
+     * @see CareerCenterStaffController#filterInternships(InternshipStatus, String, String, String)
+     * @see #displayInternshipReport(List, String)
+     */
     private void generateInternshipsByLevel() {
         displaySectionHeader("Internships by Level");
         System.out.print("Enter level (BASIC/INTERMEDIATE/ADVANCED) or leave blank for all: ");
@@ -317,11 +483,29 @@ public class CareerCenterStaffBoundary extends BaseBoundary {
         displayInternshipReport(internships, "Level: " + (level != null ? level : "ALL"));
     }
 
+    /**
+     * Generates and displays a report of all internships in the system.
+     * <p>
+     * Shows comprehensive information about every internship regardless of
+     * status, visibility, or other attributes.
+     *
+     * @see CareerCenterStaffController#listAllInternships()
+     * @see #displayInternshipReport(List, String)
+     */
     private void generateAllInternships() {
         List<Internship> internships = ctl.listAllInternships();
         displayInternshipReport(internships, "ALL INTERNSHIPS");
     }
 
+    /**
+     * Displays internship report with given filter description.
+     * <p>
+     * Formats and displays internship data in a consistent tabular format
+     * including key attributes like title, company, level, status, and slot usage.
+     *
+     * @param internships list of internships to display
+     * @param filter filter description for header (e.g., "Status: APPROVED")
+     */
     private void displayInternshipReport(List<Internship> internships, String filter) {
         displaySectionHeader("Internship Report - " + filter);
         System.out.println("Total: " + internships.size() + " internship(s)");
@@ -346,6 +530,15 @@ public class CareerCenterStaffBoundary extends BaseBoundary {
     }
 
     /* ---------- Display Helpers ---------- */
+    
+    /**
+     * Displays detailed information about an internship.
+     * <p>
+     * Shows comprehensive details including all stored attributes of the internship
+     * for review purposes during approval processes.
+     *
+     * @param internship internship to display
+     */
     private void displayInternshipDetails(Internship internship) {
         displaySectionHeader("Internship Details");
         System.out.println("ID: " + internship.getInternshipId());
@@ -361,6 +554,14 @@ public class CareerCenterStaffBoundary extends BaseBoundary {
         System.out.println("Slots: " + internship.getConfirmedSlots() + "/" + internship.getMaxSlots());
     }
 
+    /**
+     * Displays detailed information about a company representative.
+     * <p>
+     * Shows comprehensive details including contact information, company details,
+     * and approval status for review during registration approval.
+     *
+     * @param rep company representative to display
+     */
     private void displayRepDetails(CompanyRep rep) {
         displaySectionHeader("Company Representative Details");
         System.out.println("Name: " + rep.getName());
@@ -374,6 +575,14 @@ public class CareerCenterStaffBoundary extends BaseBoundary {
         }
     }
 
+    /**
+     * Displays detailed information about a withdrawal request.
+     * <p>
+     * Shows comprehensive details including student information, internship details,
+     * application status, and withdrawal reason for informed decision making.
+     *
+     * @param wr withdrawal request to display
+     */
     private void displayWithdrawalDetails(WithdrawalRequest wr) {
         var app = wr.getApplication();
         var s = app.getStudent();
@@ -389,6 +598,4 @@ public class CareerCenterStaffBoundary extends BaseBoundary {
         System.out.println("Withdrawal Reason: " + wr.getReason());
         System.out.println("Requested On: " + wr.getRequestedOn());
     }
-    
-    
 }

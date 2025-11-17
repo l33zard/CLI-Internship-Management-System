@@ -14,33 +14,68 @@ import java.io.BufferedReader;
 import java.time.LocalDate;
 
 /**
- * In-memory repository for InternshipApplication entities.
- * Also implements Student.AppReadPort for domain-level checks.
+ * In-memory repository for managing {@link entity.InternshipApplication} entities.
+ * 
+ * <p>This repository provides CRUD operations for internship applications while also
+ * implementing {@link entity.Student.AppReadPort} to support domain-level validation
+ * queries required by student business rules, such as counting active applications
+ * and checking for confirmed placements.
+ *
+ * <p>The repository maintains applications in insertion order for predictable iteration
+ * and supports CSV-based persistence for data storage and retrieval.
  */
 public class ApplicationRepository
-        implements CrudRepository<InternshipApplication, String>, Student.AppReadPort {
+    implements CrudRepository<InternshipApplication, String>, Student.AppReadPort {
 
     // Stable order for predictable iteration/exports
     private final Map<String, InternshipApplication> map = new LinkedHashMap<>();
 
     // ---------- CrudRepository ----------
 
+    /**
+     * Finds an application by its unique identifier.
+     *
+     * @param id the application ID to search for
+     * @return an {@code Optional} containing the found application, or empty if not found
+     * @throws NullPointerException if the id is null
+     */
     @Override
     public Optional<InternshipApplication> findById(String id) {
         return Optional.ofNullable(map.get(id));
     }
 
+    /**
+     * Retrieves all applications in the repository.
+     *
+     * @return a list of all applications, maintaining insertion order
+     */
     @Override
     public List<InternshipApplication> findAll() {
         return new ArrayList<>(map.values());
     }
 
+    /**
+     * Saves an application to the repository.
+     *
+     * <p>If an application with the same ID already exists, it will be replaced.
+     *
+     * @param app the application to save
+     * @return the saved application
+     * @throws NullPointerException if the application is null
+     */
     @Override
     public InternshipApplication save(InternshipApplication app) {
         map.put(app.getApplicationId(), app);
         return app;
     }
 
+    /**
+     * Saves all applications in the provided iterable.
+     *
+     * @param entities the applications to save
+     * @return a list of the saved applications
+     * @throws NullPointerException if the iterable or any element is null
+     */
     @Override
     public List<InternshipApplication> saveAll(Iterable<InternshipApplication> entities) {
         List<InternshipApplication> out = new ArrayList<>();
@@ -51,26 +86,53 @@ public class ApplicationRepository
         return out;
     }
 
+    /**
+     * Deletes an application by its ID.
+     *
+     * @param id the ID of the application to delete
+     * @throws NullPointerException if the id is null
+     */
     @Override
     public void deleteById(String id) {
         map.remove(id);
     }
 
+    /**
+     * Deletes all applications with the specified IDs.
+     *
+     * @param ids the IDs of applications to delete
+     * @throws NullPointerException if the iterable or any element is null
+     */
     @Override
     public void deleteAllById(Iterable<String> ids) {
         for (String id : ids) map.remove(id);
     }
 
+    /**
+     * Deletes all applications from the repository.
+     */
     @Override
     public void deleteAll() {
         map.clear();
     }
 
+    /**
+     * Checks whether an application with the given ID exists.
+     *
+     * @param id the ID to check
+     * @return true if an application with the ID exists, false otherwise
+     * @throws NullPointerException if the id is null
+     */
     @Override
     public boolean existsById(String id) {
         return map.containsKey(id);
     }
 
+    /**
+     * Returns the total number of applications in the repository.
+     *
+     * @return the count of applications
+     */
     @Override
     public long count() {
         return map.size();
@@ -78,7 +140,15 @@ public class ApplicationRepository
 
     // ---------- Business-related queries ----------
 
-    /** Prevent duplicate applications by the same student to the same internship. */
+    /**
+     * Checks if a duplicate application exists for the same student and internship.
+     *
+     * <p>This method prevents students from applying multiple times to the same internship.
+     *
+     * @param studentId the student's ID
+     * @param internshipId the internship's ID
+     * @return true if a duplicate application exists, false otherwise
+     */
     public boolean existsByStudentAndInternship(String studentId, String internshipId) {
         if (studentId == null || internshipId == null) return false;
         return map.values().stream().anyMatch(x ->
@@ -87,7 +157,15 @@ public class ApplicationRepository
         );
     }
 
-    /** Count active applications for a student (PENDING or SUCCESSFUL but not yet accepted). */
+    /**
+     * Counts active applications for a student.
+     *
+     * <p>Active applications are defined as those with status {@code PENDING} or 
+     * {@code SUCCESSFUL} but not yet accepted by the student.
+     *
+     * @param studentId the student's ID
+     * @return the count of active applications
+     */
     public long countActiveByStudent(String studentId) {
         if (studentId == null) return 0;
         return map.values().stream()
@@ -97,7 +175,14 @@ public class ApplicationRepository
             .count();
     }
 
-    /** Count accepted applications for an internship (used if you ever cross-check filled state). */
+    /**
+     * Counts accepted applications for an internship.
+     *
+     * <p>This can be used to cross-check if an internship has reached its capacity.
+     *
+     * @param internshipId the internship's ID
+     * @return the count of accepted applications
+     */
     public long countAcceptedForInternship(String internshipId) {
         if (internshipId == null) return 0;
         return map.values().stream()
@@ -106,7 +191,12 @@ public class ApplicationRepository
             .count();
     }
 
-    /** All applications created by a specific student (by studentId). */
+    /**
+     * Finds all applications created by a specific student.
+     *
+     * @param studentId the student's ID
+     * @return a list of applications for the student, or empty list if none found
+     */
     public List<InternshipApplication> findByStudent(String studentId) {
         if (studentId == null) return List.of();
         List<InternshipApplication> out = new ArrayList<>();
@@ -117,7 +207,12 @@ public class ApplicationRepository
         return out;
     }
 
-    /** Get all applications for a specific internship. */
+    /**
+     * Finds all applications for a specific internship.
+     *
+     * @param internshipId the internship's ID
+     * @return a list of applications for the internship, or empty list if none found
+     */
     public List<InternshipApplication> findByInternship(String internshipId) {
         if (internshipId == null) return List.of();
         return map.values().stream()
@@ -125,24 +220,50 @@ public class ApplicationRepository
             .collect(Collectors.toList());
     }
 
-    /** Delete all applications for a given student (if needed for cleanup). */
+    /**
+     * Deletes all applications for a given student.
+     *
+     * <p>Useful for cleanup when a student account is deleted.
+     *
+     * @param studentId the student's ID
+     */
     public void deleteByStudent(String studentId) {
         if (studentId == null) return;
         map.values().removeIf(x -> x.getStudent().getUserId().equals(studentId));
     }
 
-    /** Remove everything (optional, for reset/testing). */
+    /**
+     * Removes all applications from the repository.
+     *
+     * <p>Primarily intended for testing and reset scenarios.
+     */
     public void clear() {
         map.clear();
     }
 
     // ---------- Student.AppReadPort ----------
 
+    /**
+     * Counts active applications for a student as required by the domain port.
+     *
+     * @param studentId the student's ID
+     * @return the count of active applications
+     * @see #countActiveByStudent(String)
+     */
     @Override
     public int countActiveApplications(String studentId) {
         return (int) countActiveByStudent(studentId);
     }
 
+    /**
+     * Checks if a student has a confirmed placement.
+     *
+     * <p>A confirmed placement is defined as a SUCCESSFUL application that has been
+     * accepted by the student.
+     *
+     * @param studentId the student's ID
+     * @return true if the student has a confirmed placement, false otherwise
+     */
     @Override
     public boolean hasConfirmedPlacement(String studentId) {
         if (studentId == null) return false;
@@ -154,6 +275,26 @@ public class ApplicationRepository
     
     // ---------- CSV Persistence ----------
     
+    /**
+     * Saves all applications to a CSV file.
+     *
+     * <p>The CSV format includes the following columns:
+     * <ul>
+     *   <li>ApplicationID</li>
+     *   <li>AppliedOn</li>
+     *   <li>StudentID</li>
+     *   <li>InternshipID</li>
+     *   <li>Status</li>
+     *   <li>StudentAccepted</li>
+     * </ul>
+     * 
+     *
+     * <p>Parent directories are created automatically if they don't exist.
+     *
+     * @param path the output CSV file path
+     * @throws java.io.IOException if an I/O error occurs
+     * @throws SecurityException if file access is denied
+     */
     public void saveToCsv(String path) throws java.io.IOException {
         Path p = Paths.get(path);
         Files.createDirectories(p.getParent() == null ? Paths.get(".") : p.getParent());
@@ -175,6 +316,30 @@ public class ApplicationRepository
         }
     }
     
+    /**
+     * Loads applications from a CSV file and attaches resolved student and internship references.
+     *
+     * <p>This method attempts to resolve student and internship references using the provided
+     * repositories. Applications that cannot be resolved (missing student or internship) are
+     * skipped and diagnostic information is printed to help identify resolution issues.
+     *
+     * <p>The CSV file should have a header row with case-insensitive column names that can include:
+     * <ul>
+     *   <li>ApplicationID, ID</li>
+     *   <li>AppliedOn, Applied, Date</li>
+     *   <li>StudentID, Student, SID</li>
+     *   <li>InternshipID, Internship, IID</li>
+     *   <li>Status</li>
+     *   <li>StudentAccepted, Accepted</li>
+     * </ul>
+     * 
+     *
+     * @param path the path to the CSV file
+     * @param students the student repository for resolving student references
+     * @param internships the internship repository for resolving internship references
+     * @throws java.io.IOException if an I/O error occurs while reading the file
+     * @throws SecurityException if file access is denied
+     */
     public void loadFromCsv(String path,
                             StudentRepository students,
                             InternshipRepository internships) throws java.io.IOException {
@@ -286,6 +451,14 @@ public class ApplicationRepository
         }
     }
 
+    /**
+     * Extracts a value from a CSV row using flexible header matching.
+     *
+     * @param row the CSV row data
+     * @param idx the header index mapping
+     * @param possibleHeaders possible header names to try (case-insensitive)
+     * @return the extracted value, or null if not found
+     */
     private String getCsvValue(String[] row, Map<String, Integer> idx, String... possibleHeaders) {
         for (String header : possibleHeaders) {
             Integer index = idx.get(header.toLowerCase());

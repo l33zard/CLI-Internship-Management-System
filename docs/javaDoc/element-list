@@ -1,4 +1,6 @@
-module:assignment2
+module:Internship.Management.System
+app
+boundary
 controller
 database
 entity

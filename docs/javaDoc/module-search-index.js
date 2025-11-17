@@ -1,1 +1,1 @@
-moduleSearchIndex = [{"l":"assignment2"}];updateSearchResults();
+moduleSearchIndex = [{"l":"Internship.Management.System"}];updateSearchResults();

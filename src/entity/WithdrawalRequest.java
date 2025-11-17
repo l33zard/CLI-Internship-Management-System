@@ -3,6 +3,29 @@ package entity;
 import java.time.LocalDate;
 import java.util.Objects;
 
+/**
+ * Represents a student's request to withdraw from an internship application.
+ * 
+ * <p>This domain model manages the complete lifecycle of a withdrawal request, from creation
+ * through staff processing. It maintains an audit trail of all processing actions and ensures
+ * proper coordination with the associated internship application.
+ *
+ * <p><b>Lifecycle States:</b>
+ * <ul>
+ *   <li><b>PENDING</b> - Request created, awaiting staff processing</li>
+ *   <li><b>APPROVED</b> - Request approved by staff, application updated accordingly</li>
+ *   <li><b>REJECTED</b> - Request rejected by staff, application remains unchanged</li>
+ * </ul>
+ *
+ * <p><b>Key Features:</b>
+ * <ul>
+ *   <li>Maintains audit trail of staff processing actions</li>
+ *   <li>Coordinates with internship application state changes</li>
+ *   <li>Handles both accepted and pending application withdrawals</li>
+ *   <li>Provides reason tracking for both students and staff</li>
+ * </ul>
+ *
+ */
 public class WithdrawalRequest {
     private static int idCounter = 1;
 
@@ -19,6 +42,16 @@ public class WithdrawalRequest {
     private LocalDate processedOn;                  // null until processed
     private String staffNote;                       // optional
 
+    /**
+     * Creates a new withdrawal request for the specified application.
+     * Validates that the requesting student owns the application being withdrawn.
+     *
+     * @param application the internship application being withdrawn (must belong to requester)
+     * @param requestedBy the student requesting the withdrawal
+     * @param reason optional free-text reason for withdrawal (will be trimmed)
+     * @throws NullPointerException if application or requestedBy is null
+     * @throws IllegalArgumentException if requester does not match application owner
+     */
     public WithdrawalRequest(InternshipApplication application, Student requestedBy, String reason) {
         this.requestId   = String.format("WRQ%04d", idCounter++);
         this.application = Objects.requireNonNull(application, "application");
@@ -32,29 +65,103 @@ public class WithdrawalRequest {
 
     // ---------- Queries ----------
 
+    /**
+     * Returns the unique withdrawal request identifier.
+     *
+     * @return the request ID in format "WRQ####"
+     */
     public String getRequestId()      { return requestId; }
+    
+    /**
+     * Returns the internship application being withdrawn.
+     *
+     * @return the associated internship application
+     */
     public InternshipApplication getApplication() { return application; }  // CHANGED return type
+    
+    /**
+     * Returns the student who requested the withdrawal.
+     *
+     * @return the requesting student
+     */
     public Student getRequestedBy()   { return requestedBy; }
+    
+    /**
+     * Returns the date when the withdrawal request was created.
+     *
+     * @return the request creation date
+     */
     public LocalDate getRequestedOn() { return requestedOn; }
+    
+    /**
+     * Returns the student's reason for withdrawal.
+     *
+     * @return the reason text (may be empty string if no reason provided)
+     */
     public String getReason()         { return reason; }
+    
+    /**
+     * Returns the current processing status of the request.
+     *
+     * @return the withdrawal request status
+     */
     public WithdrawalRequestStatus getStatus() { return status; }
+    
+    /**
+     * Returns the staff member who processed the request.
+     *
+     * @return the processing staff member, or null if still pending
+     */
     public CareerCenterStaff getProcessedBy()  { return processedBy; }
+    
+    /**
+     * Returns the date when the request was processed.
+     *
+     * @return the processing date, or null if still pending
+     */
     public LocalDate getProcessedOn()          { return processedOn; }
+    
+    /**
+     * Returns the optional note added by processing staff.
+     *
+     * @return the staff note, or null if no note provided
+     */
     public String getStaffNote()               { return staffNote; }
+    
+    /**
+     * Checks if the request is still awaiting staff action.
+     *
+     * @return true if status is PENDING, false otherwise
+     */
     public boolean isPending() { return status == WithdrawalRequestStatus.PENDING; }
 
     // ---------- Commands ----------
 
-    /** Update student's own reason text before processing. */
+    /**
+     * Updates the student's reason text for the withdrawal request.
+     * This operation is only allowed while the request is still PENDING.
+     *
+     * @param reason the new reason text
+     * @throws IllegalStateException if the request has already been processed
+     */
     public void setReason(String reason) {
         ensurePending();
         this.reason = sanitize(reason);
     }
 
     /**
-     * Approve the withdrawal and update linked aggregates atomically:
-     * - If student had confirmed, free a slot.
-     * - Else, mark application UNSUCCESSFUL so it no longer counts toward any caps.
+     * Approves the withdrawal request and updates related aggregates atomically.
+     * 
+     * <p><b>Processing Logic:</b>
+     * <ul>
+     *   <li>If student had confirmed acceptance: frees up the internship slot and unsets acceptance</li>
+     *   <li>If application was PENDING or SUCCESSFUL (unconfirmed): marks application as WITHDRAWN</li>
+     * </ul>
+     *
+     * @param staff the career center staff member performing the approval
+     * @param note optional note from staff explaining the decision
+     * @throws NullPointerException if staff is null
+     * @throws IllegalStateException if request is not in PENDING status
      */
     public void approve(CareerCenterStaff staff, String note) {
         Objects.requireNonNull(staff, "staff");
@@ -75,7 +182,15 @@ public class WithdrawalRequest {
         stamp(staff, note);
     }
 
-    /** Reject the withdrawal; application remains unchanged. */
+    /**
+     * Rejects the withdrawal request.
+     * The associated internship application remains unchanged.
+     *
+     * @param staff the career center staff member performing the rejection
+     * @param note optional note from staff explaining the rejection
+     * @throws NullPointerException if staff is null
+     * @throws IllegalStateException if request is not in PENDING status
+     */
     public void reject(CareerCenterStaff staff, String note) {
         Objects.requireNonNull(staff, "staff");
         ensurePending();
@@ -85,16 +200,33 @@ public class WithdrawalRequest {
 
     // ---------- Helpers ----------
 
+    /**
+     * Ensures the request is still in PENDING status.
+     *
+     * @throws IllegalStateException if the request has already been processed
+     */
     private void ensurePending() {
         if (!isPending()) throw new IllegalStateException("Request already processed: " + status);
     }
 
+    /**
+     * Records staff processing information including timestamp and notes.
+     *
+     * @param staff the staff member processing the request
+     * @param note optional processing note
+     */
     private void stamp(CareerCenterStaff staff, String note) {
         this.processedBy = staff;
         this.processedOn = LocalDate.now();
         this.staffNote   = sanitize(note);
     }
 
+    /**
+     * Sanitizes text input by trimming and limiting length.
+     *
+     * @param s the input string to sanitize
+     * @return the sanitized string (empty string if input was null, trimmed and length-capped otherwise)
+     */
     private static String sanitize(String s) {
         if (s == null) return "";
         String t = s.trim();
@@ -104,6 +236,12 @@ public class WithdrawalRequest {
 
     // ---------- Identity & debug ----------
 
+//    /**
+//     * Compares this withdrawal request with another object for equality based on request ID.
+//     *
+//     * @param o the object to compare with
+//     * @return true if the objects are equal, false otherwise
+//     */
 //    @Override
 //    public boolean equals(Object o) {
 //        if (this == o) return true;
@@ -112,9 +250,19 @@ public class WithdrawalRequest {
 //        return requestId.equals(that.requestId);
 //    }
 //
+//    /**
+//     * Returns the hash code for this withdrawal request based on the request ID.
+//     *
+//     * @return the hash code
+//     */
 //    @Override
 //    public int hashCode() { return requestId.hashCode(); }
 //
+//    /**
+//     * Returns a string representation of this withdrawal request.
+//     *
+//     * @return formatted string with key request details
+//     */
 //    @Override
 //    public String toString() {
 //        return "WithdrawalRequest{" +

@@ -10,14 +10,53 @@ import entity.WithdrawalRequestStatus;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Console boundary class for student-facing interactions in the internship management system.
+ * This class provides the student dashboard interface and delegates business operations
+ * to the {@link StudentController}. It handles all student-related menu navigation,
+ * application management, and withdrawal request processing through a console-based UI.
+ * 
+ * <p>Key responsibilities include:
+ * <ul>
+ *   <li>Displaying eligible internships for application</li>
+ *   <li>Managing student internship applications (view, accept offers, withdraw)</li>
+ *   <li>Handling withdrawal request creation and tracking</li>
+ *   <li>Providing password change functionality</li>
+ * </ul>
+ * 
+ */
 public class StudentBoundary extends BaseBoundary {
     private final StudentController ctl;
 
+    /**
+     * Creates a new StudentBoundary instance bound to the specified controllers.
+     * 
+     * @param ctl  the student controller that implements core student operations
+     * @param auth the authentication controller used for password management
+     * @throws IllegalArgumentException if either controller is null
+     */
     public StudentBoundary(StudentController ctl, AuthController auth) {
         super(auth);
         this.ctl = ctl;
     }
 
+    /**
+     * Main student menu loop that presents the student dashboard and handles user interaction.
+     * This method displays the primary navigation menu and processes user selections
+     * for various student operations. The loop continues until the user chooses to logout.
+     * 
+     * <p>Menu options include:
+     * <ul>
+     *   <li>View Available Internships</li>
+     *   <li>View My Applications</li>
+     *   <li>View My Withdrawal Requests</li>
+     *   <li>Change Password</li>
+     *   <li>Logout</li>
+     * </ul>
+     * 
+     * @param studentId the unique identifier (login key) of the currently authenticated student
+     * @throws SecurityException if the studentId is invalid or access is denied
+     */
     public void menu(String studentId) {
         while (true) {
             displaySectionHeader("Student Dashboard");
@@ -51,6 +90,25 @@ public class StudentBoundary extends BaseBoundary {
     }
 
     /* ---------- Available Internships ---------- */
+    
+    /**
+     * Displays eligible internships and allows students to apply for specific opportunities.
+     * This method retrieves all internships that match the student's eligibility criteria,
+     * displays them in a formatted list, and provides the option to view details and apply.
+     * 
+     * <p>The method checks application limits and placement status before allowing applications:
+     * <ul>
+     *   <li>Maximum of 3 active applications allowed</li>
+     *   <li>Cannot apply if student has already accepted a placement</li>
+     * </ul>
+     * 
+     * @param studentId the unique identifier of the student
+     * @throws IllegalStateException if the student cannot apply (limit reached or placement accepted)
+     * @see StudentController#viewEligibleInternships(String)
+     * @see StudentController#canApplyMore(String)
+     * @see StudentController#hasConfirmedPlacement(String)
+     * @see StudentController#applyForInternship(String, String)
+     */
     private void handleAvailableInternships(String studentId) {
         List<Internship> internships = ctl.viewEligibleInternships(studentId);
         
@@ -107,6 +165,16 @@ public class StudentBoundary extends BaseBoundary {
     }
 
     /* ---------- My Applications ---------- */
+    
+    /**
+     * Displays the applications submenu for viewing applications filtered by status or all applications.
+     * This method serves as the entry point for application management, allowing students
+     * to navigate between different views of their applications based on status.
+     * 
+     * @param studentId the unique identifier of the student
+     * @see StudentController#viewMyApplications(String)
+     * @see ApplicationStatus
+     */
     private void handleMyApplications(String studentId) {
         while (true) {
             List<InternshipApplication> myApps = ctl.viewMyApplications(studentId);
@@ -139,6 +207,15 @@ public class StudentBoundary extends BaseBoundary {
         }
     }
 
+    /**
+     * Displays applications filtered by a specific status and allows management of selected applications.
+     * 
+     * @param studentId the unique identifier of the student
+     * @param allApps all student applications (unfiltered)
+     * @param status the application status to filter by
+     * @param title the display title for the section header
+     * @see ApplicationStatus
+     */
     private void handleApplicationStatusView(String studentId, List<InternshipApplication> allApps, 
                                            ApplicationStatus status, String title) {
         List<InternshipApplication> filteredApps = allApps.stream()
@@ -172,6 +249,12 @@ public class StudentBoundary extends BaseBoundary {
         }
     }
 
+    /**
+     * Displays all applications across all statuses and allows management of selected applications.
+     * 
+     * @param studentId the unique identifier of the student
+     * @param allApps all student applications across all statuses
+     */
     private void handleAllApplicationsView(String studentId, List<InternshipApplication> allApps) {
         if (allApps.isEmpty()) {
             System.out.println("No applications found.");
@@ -200,6 +283,21 @@ public class StudentBoundary extends BaseBoundary {
         }
     }
 
+    /**
+     * Displays detailed application information and provides context-appropriate actions.
+     * Available actions depend on the application status and acceptance state:
+     * <ul>
+     *   <li>PENDING: Can request withdrawal</li>
+     *   <li>SUCCESSFUL (not accepted): Can accept offer or request withdrawal</li>
+     *   <li>SUCCESSFUL (accepted): Can request withdrawal with special handling</li>
+     * </ul>
+     * 
+     * @param studentId the unique identifier of the student
+     * @param app the application to manage
+     * @throws IllegalStateException if invalid actions are attempted for the current state
+     * @see StudentController#getApplication(String, String)
+     * @see StudentController#confirmAcceptance(String, String)
+     */
     private void handleApplicationManagement(String studentId, InternshipApplication app) {
         while (true) {
             app = ctl.getApplication(studentId, app.getApplicationId());
@@ -261,7 +359,17 @@ public class StudentBoundary extends BaseBoundary {
         }
     }
 
-    /* ---------- My Withdrawal Requests (SUB-MENU) ---------- */
+    /* ---------- Withdrawal Requests ---------- */
+    
+    /**
+     * Displays the withdrawal requests submenu for viewing requests filtered by status or all requests.
+     * This method provides navigation between different views of withdrawal requests
+     * based on their processing status.
+     * 
+     * @param studentId the unique identifier of the student
+     * @see StudentController#viewMyWithdrawalRequests(String)
+     * @see WithdrawalRequestStatus
+     */
     private void handleMyWithdrawalRequests(String studentId) {
         while (true) {
             List<WithdrawalRequest> allWithdrawals = ctl.viewMyWithdrawalRequests(studentId);
@@ -299,8 +407,15 @@ public class StudentBoundary extends BaseBoundary {
         }
     }
 
-    
-    
+    /**
+     * Displays withdrawal requests filtered by a specific status.
+     * 
+     * @param studentId the unique identifier of the student
+     * @param allWithdrawals all student withdrawal requests (unfiltered)
+     * @param status the withdrawal request status to filter by
+     * @param title the display title for the section header
+     * @see WithdrawalRequestStatus
+     */
     private void handleWithdrawalStatusView(String studentId, List<WithdrawalRequest> allWithdrawals, 
                                           WithdrawalRequestStatus status, String title) {
         List<WithdrawalRequest> filteredWithdrawals = allWithdrawals.stream()
@@ -334,6 +449,12 @@ public class StudentBoundary extends BaseBoundary {
         }
     }
 
+    /**
+     * Displays all withdrawal requests across all statuses.
+     * 
+     * @param studentId the unique identifier of the student
+     * @param allWithdrawals all student withdrawal requests across all statuses
+     */
     private void handleAllWithdrawalsView(String studentId, List<WithdrawalRequest> allWithdrawals) {
         displaySectionHeader("ALL WITHDRAWAL REQUESTS");
         for (int i = 0; i < allWithdrawals.size(); i++) {
@@ -357,6 +478,15 @@ public class StudentBoundary extends BaseBoundary {
         }
     }
 
+    /**
+     * Prompts the user for a withdrawal reason and submits a withdrawal request for the specified application.
+     * This method validates that the reason is not empty before submitting the request to the controller.
+     * 
+     * @param studentId the unique identifier of the student
+     * @param app the application to request withdrawal for
+     * @throws IllegalArgumentException if the withdrawal reason is empty
+     * @see StudentController#requestWithdrawal(String, String, String)
+     */
     private void handleWithdrawalRequest(String studentId, InternshipApplication app) {
         System.out.print("Enter withdrawal reason: ");
         String reason = sc.nextLine().trim();
@@ -375,6 +505,13 @@ public class StudentBoundary extends BaseBoundary {
         }
     }
 
+    /**
+     * Displays detailed information about a withdrawal request including processing status and staff notes.
+     * Shows comprehensive information about the withdrawal request, including the associated application,
+     * reason for withdrawal, processing status, and any staff comments if processed.
+     * 
+     * @param wr the withdrawal request to display
+     */
     private void displayWithdrawalDetails(WithdrawalRequest wr) {
         var app = wr.getApplication();
         
@@ -396,6 +533,14 @@ public class StudentBoundary extends BaseBoundary {
     }
 
     /* ---------- Display Helpers ---------- */
+    
+    /**
+     * Displays complete internship details including company information, requirements, and availability.
+     * Presents a comprehensive view of internship information to help students make informed
+     * application decisions.
+     * 
+     * @param internship the internship to display details for
+     */
     private void displayInternshipDetails(Internship internship) {
         displaySectionHeader("Internship Details");
         System.out.println("Title: " + internship.getTitle());

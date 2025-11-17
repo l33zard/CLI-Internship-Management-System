@@ -140,7 +140,7 @@ Get-ChildItem -Recurse -Filter *.java -Path .\src | ForEach-Object { javac -d .\
 
 ## Java Doc Documentation 
 
-The Java Doc documentation can be found under the "docs/javadoc"folder.
+The Java Doc documentation can be found under the "docs/javaDoc"folder.
 You can access it by executing:
 
 ### Windows

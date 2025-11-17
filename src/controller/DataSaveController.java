@@ -4,10 +4,44 @@ import database.*;
 import java.io.IOException;
 import java.nio.file.*;
 
+/**
+ * Controller responsible for loading and saving repository CSV files from/to
+ * the configured base data directory.
+ * <p>
+ * This controller provides centralized data persistence management for all
+ * system entities, handling both save and load operations for:
+ * <ul>
+ *   <li>Student records</li>
+ *   <li>Company representative accounts</li>
+ *   <li>Career center staff accounts</li>
+ *   <li>Internship postings</li>
+ *   <li>Internship applications</li>
+ *   <li>Withdrawal requests</li>
+ * </ul>
+ * 
+ * The controller uses a configurable base directory for CSV file storage and
+ * automatically creates the directory structure if it doesn't exist. Operations
+ * continue even if individual repository operations fail, with comprehensive
+ * error reporting.
+ * 
+ */
 public class DataSaveController extends BaseController {
 
     private final Path baseDir;
 
+    /**
+     * Creates a DataSaveController using the default data directory `src/data`.
+     * <p>
+     * The default directory will be created if it doesn't exist. If directory
+     * creation fails, a warning will be printed but initialization continues.
+     *
+     * @param students the student repository instance
+     * @param reps the company representative repository instance
+     * @param staff the career center staff repository instance
+     * @param internships the internship repository instance
+     * @param applications the internship application repository instance
+     * @param withdrawals the withdrawal request repository instance
+     */
     public DataSaveController(StudentRepository students,
                               CompanyRepRepository reps,
                               CareerCenterStaffRepository staff,
@@ -17,6 +51,21 @@ public class DataSaveController extends BaseController {
         this(students, reps, staff, internships, applications, withdrawals, Paths.get("src", "data"));
     }
 
+    /**
+     * Creates a DataSaveController with an explicit base directory for CSV files.
+     * <p>
+     * The specified directory will be created if it doesn't exist. If directory
+     * creation fails, a warning will be printed but initialization continues.
+     * If the provided baseDir is null, the default directory `src/data` will be used.
+     *
+     * @param students the student repository instance
+     * @param reps the company representative repository instance
+     * @param staff the career center staff repository instance
+     * @param internships the internship repository instance
+     * @param applications the internship application repository instance
+     * @param withdrawals the withdrawal request repository instance
+     * @param baseDir the base directory path for CSV file storage, or null to use default
+     */
     public DataSaveController(StudentRepository students,
                               CompanyRepRepository reps,
                               CareerCenterStaffRepository staff,
@@ -34,6 +83,22 @@ public class DataSaveController extends BaseController {
         }
     }
 
+    /**
+     * Saves all repositories to their respective CSV files under the base directory.
+     * <p>
+     * Each repository is saved to a separate CSV file. The method attempts to save
+     * all repositories even if some operations fail, and collects all error messages
+     * into a single exception if any failures occur.
+     *
+     * @param studentsCsv the filename for student data (e.g., "students.csv")
+     * @param repsCsv the filename for company representative data (e.g., "company_reps.csv")
+     * @param staffCsv the filename for staff data (e.g., "staff.csv")
+     * @param internshipsCsv the filename for internship data (e.g., "internships.csv")
+     * @param applicationsCsv the filename for application data (e.g., "applications.csv")
+     * @param withdrawalsCsv the filename for withdrawal request data (e.g., "withdrawals.csv")
+     * @throws IOException if any save operation fails, containing consolidated error
+     *         messages from all failed operations
+     */
     public void saveAll(String studentsCsv,
                         String repsCsv,
                         String staffCsv,
@@ -97,6 +162,27 @@ public class DataSaveController extends BaseController {
         }
     }
 
+    /**
+     * Loads all repositories from their respective CSV files in the base directory.
+     * <p>
+     * Each repository is loaded from a separate CSV file. If a file doesn't exist,
+     * a message is printed but loading continues for other files. The method attempts
+     * to load all repositories even if some operations fail, and collects all error
+     * messages into a single exception if any failures occur.
+     * <p>
+     * Some repositories require dependencies for loading (e.g., applications need
+     * student and internship references), so repositories should be loaded in the
+     * correct order.
+     *
+     * @param studentsCsv the filename for student data (e.g., "students.csv")
+     * @param repsCsv the filename for company representative data (e.g., "company_reps.csv")
+     * @param staffCsv the filename for staff data (e.g., "staff.csv")
+     * @param internshipsCsv the filename for internship data (e.g., "internships.csv")
+     * @param applicationsCsv the filename for application data (e.g., "applications.csv")
+     * @param withdrawalsCsv the filename for withdrawal request data (e.g., "withdrawals.csv")
+     * @throws IOException if any load operation fails, containing consolidated error
+     *         messages from all failed operations
+     */
     public void loadAll(String studentsCsv,
                         String repsCsv,
                         String staffCsv,
@@ -184,10 +270,23 @@ public class DataSaveController extends BaseController {
         }
     }
 
+    /**
+     * Returns the base directory path used for CSV file storage.
+     *
+     * @return the base directory path where CSV files are stored
+     */
     public Path getBaseDir() {
         return baseDir;
     }
 
+    /**
+     * Checks if all repositories have been properly initialized.
+     * <p>
+     * This method verifies that all repository instances are non-null,
+     * indicating that the controller is ready for data operations.
+     *
+     * @return true if all repositories are initialized, false otherwise
+     */
     public boolean isInitialized() {
         return studentRepo != null && repRepo != null && staffRepo != null && 
                internshipRepo != null && applicationRepo != null && withdrawalRepo != null;
