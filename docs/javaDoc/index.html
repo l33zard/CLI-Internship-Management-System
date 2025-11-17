@@ -29,6 +29,7 @@ loadScripts(document, 'script');</script>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li class="nav-bar-cell1-rev">Overview</li>
+<li><a href="Internship.Management.System/module-summary.html">Module</a></li>
 <li><a href="overview-tree.html">Tree</a></li>
 <li><a href="index-files/index-1.html">Index</a></li>
 <li><a href="search.html">Search</a></li>
@@ -50,16 +51,134 @@ loadScripts(document, 'script');</script>
 <div class="header">
 <h1 class="title">Internship Management System</h1>
 </div>
-<div id="all-modules-table">
-<div class="caption"><span>Modules</span></div>
-<div class="summary-table two-column-summary">
-<div class="table-header col-first">Module</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color all-modules-table all-modules-table-tab1"><a href="Internship.Management.System/module-summary.html">Internship.Management.System</a></div>
-<div class="col-last even-row-color all-modules-table all-modules-table-tab1">&nbsp;</div>
-</div>
+
+<!-- Custom Overview Content -->
+<div class="overview-container">
+    <section class="package-overview">
+        <h2>System Overview</h2>
+        <p>The Internship Management System is a comprehensive Java application designed to streamline the internship placement process for educational institutions. The system facilitates interaction between students, company representatives, and career center staff.</p>
+        
+        <div class="system-features">
+            <h3>Key Features</h3>
+            <ul>
+                <li><strong>Student Portal:</strong> Browse internships, submit applications, and manage placements</li>
+                <li><strong>Company Portal:</strong> Post internship opportunities and manage applications</li>
+                <li><strong>Staff Portal:</strong> Oversee system operations, approve company registrations, internship listings and generate reports</li>
+                <li><strong>Role-based Access:</strong> Secure authentication and authorization</li>
+            </ul>
+        </div>
+
+        <div class="package-info">
+            <h3>Package Structure</h3>
+            <div class="package-links">
+                <div class="package-group">
+                    <h4>Core Packages</h4>
+                    <ul>
+                        <li><a href="Internship.Management.System/boundary/package-summary.html">boundary</a> - User interface layer and console interactions</li>
+                        <li><a href="Internship.Management.System/controller/package-summary.html">controller</a> - Business logic and application flow</li>
+                        <li><a href="Internship.Management.System/entity/package-summary.html">entity</a> - Domain models and data entities</li>
+                        <li><a href="Internship.Management.System/database/package-summary.html">database</a> - Data persistence and repository layer</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="getting-started">
+            <h3>Getting Started</h3>
+            <p>To begin exploring the system documentation:</p>
+            <ol>
+                <li>Use the <strong>Tree</strong> view to see the complete package hierarchy</li>
+                <li>Check the <strong>Index</strong> for alphabetical listing of all classes and members</li>
+                <li>Use the <strong>Search</strong> function to find specific classes or methods</li>
+                <li>Visit the <strong>Help</strong> page for documentation usage tips</li>
+            </ol>
+        </div>
+    </section>
 </div>
 </main>
 </div>
+
+<style>
+.overview-container {
+    margin: 20px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.overview-container h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.overview-container h3 {
+    color: #34495e;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+.overview-container h4 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.system-features ul, .package-links ul, .quick-links ul, .getting-started ol {
+    margin-left: 20px;
+    line-height: 1.6;
+}
+
+.system-features li, .package-links li, .quick-links li {
+    margin-bottom: 8px;
+}
+
+.package-links {
+    margin: 20px 0;
+}
+
+.package-group {
+    margin-bottom: 20px;
+}
+
+.link-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin: 20px 0;
+}
+
+.link-column ul {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.link-column li {
+    list-style: none;
+    margin-bottom: 8px;
+    padding-left: 0;
+}
+
+.getting-started ol {
+    margin-left: 20px;
+}
+
+.getting-started li {
+    margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+    .link-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .overview-container {
+        padding: 15px;
+        margin: 10px 0;
+    }
+}
+</style>
 </body>
 </html>

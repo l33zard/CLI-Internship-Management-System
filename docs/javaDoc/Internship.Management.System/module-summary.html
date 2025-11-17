@@ -53,6 +53,8 @@ loadScripts(document, 'script');</script>
 <div class="toc-header">Contents</div>
 <ol class="toc-list" tabindex="-1">
 <li><a href="#" tabindex="0">Description</a></li>
+<li><a href="#package-summary" tabindex="0">Packages</a></li>
+<li><a href="#system-architecture" tabindex="0">System Architecture</a></li>
 </ol>
 <button class="hide-sidebar"><span>Hide sidebar&nbsp;</span><img src="../resource-files/left.svg" alt="Hide sidebar"></button><button class="show-sidebar"><img src="../resource-files/right.svg" alt="Show sidebar"><span>&nbsp;Show sidebar</span></button></nav>
 <main role="main">
@@ -63,7 +65,183 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="module-signature">module <span class="element-name">Internship.Management.System</span></div>
 </div>
+
+<!-- Enhanced Module Description -->
+<section class="module-description">
+    <h2>Module Description</h2>
+    <p>The Internship Management System is a comprehensive Java application designed to streamline the internship placement process for educational institutions. The system facilitates interaction between students, company representatives, and career center staff through a console-based interface.</p>
+    
+    <h3 id="system-architecture">System Architecture</h3>
+    <p>This module follows a layered architecture pattern with clear separation of concerns:</p>
+    <ul>
+        <li><strong>Presentation Layer</strong> - Console-based user interfaces in the boundary package</li>
+        <li><strong>Business Layer</strong> - Application logic and workflow management in the controller package</li>
+        <li><strong>Domain Layer</strong> - Business entities and data models in the entity package</li>
+        <li><strong>Persistence Layer</strong> - Data storage and retrieval operations in the database package</li>
+    </ul>
+
+    <h3>Key Features</h3>
+    <ul>
+        <li>Multi-role authentication (Student, Company Representative, Staff)</li>
+        <li>Internship application and management system</li>
+        <li>Company registration and approval workflow</li>
+        <li>Application status tracking and withdrawal handling</li>
+        <li>Role-based access control and authorization</li>
+    </ul>
+</section>
+
+<!-- Package Summary Section -->
+<section class="packages-summary">
+    <h2 id="package-summary">Packages</h2>
+    <div class="package-summary-table">
+        <div class="caption"><span>Package Summary</span></div>
+        <div class="summary-table two-column-summary">
+            <div class="table-header col-first">Package</div>
+            <div class="table-header col-last">Description</div>
+            
+            <div class="col-first even-row-color"><a href="boundary/package-summary.html">boundary</a></div>
+            <div class="col-last even-row-color">
+                User interface layer containing all console-based interaction classes. Includes main menu, student dashboard, company portal, and staff administration interfaces.
+            </div>
+            
+            <div class="col-first odd-row-color"><a href="controller/package-summary.html">controller</a></div>
+            <div class="col-last odd-row-color">
+                Business logic layer handling application workflows, authentication, authorization, and data validation.
+            </div>
+            
+            <div class="col-first even-row-color"><a href="entity/package-summary.html">entity</a></div>
+            <div class="col-last even-row-color">
+                Domain model layer containing all system entities including Student, CompanyRep, Internship, InternshipApplication, and WithdrawalRequest.
+            </div>
+            
+            <div class="col-first odd-row-color"><a href="database/package-summary.html">database</a></div>
+            <div class="col-last odd-row-color">
+                Data persistence layer for system storage, including repository interfaces and data access operations.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Navigation -->
+<section class="quick-navigation">
+    <h2>Quick Navigation</h2>
+    <div class="navigation-links">
+        <div class="link-category">
+            <h3>User Interfaces</h3>
+            <ul>
+                <li><a href="boundary/MainMenuBoundary.html">MainMenuBoundary</a></li>
+                <li><a href="boundary/StudentBoundary.html">StudentBoundary</a></li>
+                <li><a href="boundary/CompanyRepBoundary.html">CompanyRepBoundary</a></li>
+                <li><a href="boundary/CareerCenterStaffBoundary.html">CareerCenterStaffBoundary</a></li>
+                <li><a href="boundary/LoginBoundary.html">LoginBoundary</a></li>
+                <li><a href="boundary/CompanyRepRegistrationBoundary.html">CompanyRepRegistrationBoundary</a></li>
+            </ul>
+        </div>
+
+        <div class="link-category">
+            <h3>Business Logic</h3>
+            <ul>
+                <li><a href="controller/AuthController.html">AuthController</a></li>
+                <li><a href="controller/CareerCenterStaffController.html">CareerCenterStaffController</a></li>
+                <li><a href="controller/CompanyRepController.html">CompanyRepController</a></li>
+                <li><a href="controller/CompanyRepRegistrationController.html">CompanyRepRegistrationController</a></li>
+                <li><a href="controller/DataSaveController.html">DataSaveController</a></li>
+                <li><a href="controller/StudentController.html">StudentController</a></li>
+            </ul>
+        </div>
+        
+        <div class="link-category">
+            <h3>Core Entities</h3>
+            <ul>
+                <li><a href="entity/Student.html">Student</a></li>
+                <li><a href="entity/CompanyRep.html">CompanyRep</a></li>
+                <li><a href="entity/Internship.html">Internship</a></li>
+                <li><a href="entity/InternshipApplication.html">InternshipApplication</a></li>
+                <li><a href="entity/WithdrawalRequest.html">WithdrawalRequest</a></li>
+            </ul>
+        </div>
+
+        <div class="link-category">
+            <h3>Data Persistence</h3>
+            <ul>
+                <li><a href="database/ApplicationRepository.html">ApplicationRepository</a></li>
+                <li><a href="database/CareerCenterStaffRepository.html">CareerCenterStaffRepository</a></li>
+                <li><a href="database/CompanyRepRepository.html">CompanyRepRepository</a></li>
+                <li><a href="database/InternshipRepository.html">InternshipRepository</a></li>
+                <li><a href="database/StudentRepository.html">StudentRepository</a></li>
+                <li><a href="database/WithdrawalRequestRepository.html">WithdrawalRequestRepository</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
 </main>
 </div>
+
+<style>
+.module-description, .packages-summary, .quick-navigation {
+    margin: 20px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.module-description h2, .packages-summary h2, .quick-navigation h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.module-description h3, .quick-navigation h3 {
+    color: #34495e;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+.module-description ul, .quick-navigation ul {
+    margin-left: 20px;
+    line-height: 1.6;
+}
+
+.module-description li, .quick-navigation li {
+    margin-bottom: 8px;
+}
+
+.package-summary-table {
+    margin: 20px 0;
+}
+
+.navigation-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin: 20px 0;
+}
+
+.link-category ul {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.link-category li {
+    list-style: none;
+    margin-bottom: 8px;
+    padding-left: 0;
+}
+
+@media (max-width: 768px) {
+    .navigation-links {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .module-description, .packages-summary, .quick-navigation {
+        padding: 15px;
+        margin: 10px 0;
+    }
+}
+</style>
 </body>
 </html>
