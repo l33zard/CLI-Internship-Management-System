@@ -123,25 +123,17 @@ public class CareerCenterStaffRepository implements CrudRepository<CareerCenterS
 
     // ---------- CSV I/O ----------
 
-    // Flexible column header mappings for CSV parsing
-    private static final String COL_ID = "StaffId";
-    private static final String COL_NAME = "Name";
-    private static final String COL_ROLE = "Role";
-    private static final String COL_DEPT = "Department";
-    private static final String COL_MAIL = "Email";
-    private static final String COL_PASS = "Password";
-
     /**
      * Loads staff records from a CSV file with flexible header recognition.
      *
      * <p>The CSV file can use various column headers for each field:
      * <ul>
-     *   <li><b>User ID:</b> "staffid"</li>
-     *   <li><b>Name:</b> "name"</li>
-     *   <li><b>Role:</b> "role"</li>
-     *   <li><b>Department:</b> "department"</li>
-     *   <li><b>Email:</b> "email"</li>
-     *   <li><b>Password:</b> "password"</li>
+     *   <li><b>User ID:</b> "staffid", "user id", "userid", "id", "staff id", "ntu id", "ntu account"</li>
+     *   <li><b>Name:</b> "name", "full name"</li>
+     *   <li><b>Role:</b> "role", "position", "title"</li>
+     *   <li><b>Department:</b> "department", "dept"</li>
+     *   <li><b>Email:</b> "email", "mail"</li>
+     *   <li><b>Password:</b> "password", "pwd"</li>
      * </ul>
      * 
      *
@@ -183,12 +175,12 @@ public class CareerCenterStaffRepository implements CrudRepository<CareerCenterS
 
                 String[] c = CsvUtils.splitCsv(line);
                 try {
-                    String userId = getCsvValue(c, idx, COL_ID);
-                    String name   = getCsvValue(c, idx, COL_NAME);
-                    String role   = getCsvValue(c, idx, COL_ROLE);
-                    String dept   = getCsvValue(c, idx, COL_DEPT);
-                    String email  = getCsvValue(c, idx, COL_MAIL);
-                    String password = getCsvValue(c, idx, COL_PASS);
+                    String userId = getCsvValue(c, idx, "staffid", "user id", "userid", "id", "staff id", "ntu id", "ntu account");
+                    String name   = getCsvValue(c, idx, "name", "full name");
+                    String role   = getCsvValue(c, idx, "role", "position", "title");
+                    String dept   = getCsvValue(c, idx, "department", "dept");
+                    String email  = getCsvValue(c, idx, "email", "mail");
+                    String password = getCsvValue(c, idx, "password", "pwd");
 
                     if (userId == null) {
                         System.err.println("Staff CSV skip line " + lineNo + ": missing user ID");
