@@ -19,7 +19,7 @@ import database.*;
  * and common validation logic, promoting code reuse and maintainability.
 *
  */
-public abstract class BaseController {
+public class BaseController {
     /** 
      * Repository providing access to student records. May be null for some controllers. 
      */

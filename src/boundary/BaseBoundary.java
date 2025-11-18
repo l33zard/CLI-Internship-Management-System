@@ -16,7 +16,7 @@ import java.util.Scanner;
  *   <li>Password change functionality</li>
  *   <li>Cancel command recognition</li>
  * </ul>
- * 
+* 
  * All concrete boundary classes should extend this class to maintain consistent
  * user interaction patterns throughout the application.
  * 
