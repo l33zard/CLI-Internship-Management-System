@@ -98,8 +98,8 @@ Internship-Management-System
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/l33zard/SC2002-internship-management-system.git
-cd SC2002-internship-management-system
+git clone https://github.com/l33zard/CLI-Internship-Management-System.git
+cd CLI-Internship-Management-System
 ```
 
 ### 2. Compile the Java Source Files
@@ -162,6 +162,7 @@ xdg-open javadoc/index.html
 
 ### Or Just Double-Click
 Navigate to the `javaDoc` folder and double-click `index.html`
+
 
 
 
